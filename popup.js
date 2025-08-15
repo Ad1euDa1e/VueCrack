@@ -89,15 +89,21 @@ document.addEventListener('DOMContentLoaded', function() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             const currentUrl = tabs[0].url;
             let baseUrl = '';
+            let isHistoryMode = false;
 
-            // 提取基础URL (处理不同的URL格式)
+            // 提取域名和协议
+            const urlObj = new URL(currentUrl);
+            const domainBase = urlObj.origin; // 例如 https://ih.qcylxyg.com
+
+            // 分析当前URL的路由模式
             if (currentUrl.includes('#/') || currentUrl.includes('#')) {
-                // 针对带hash的URL (SPA常见格式)
+                // 针对带hash的URL (SPA常见格式) - Hash模式
                 const hashIndex = currentUrl.indexOf('#');
                 baseUrl = currentUrl.substring(0, hashIndex + 1); // 包含#
             } else {
-                // 针对没有hash的URL，假设路由会附加到URL末尾
-                baseUrl = currentUrl.endsWith('/') ? currentUrl : currentUrl + '/';
+                // 针对history模式的SPA或常规网站
+                isHistoryMode = true;
+                baseUrl = domainBase; // 使用域名作为基础URL
             }
 
             // 提取所有路径
@@ -112,16 +118,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 确保路径格式正确
                 const cleanPath = path.startsWith('/') ? path.substring(1) : path;
 
-                // 构建完整URL (针对带hash的SPA应用)
                 let fullUrl;
-                if (baseUrl.endsWith('#')) {
-                    // 如果baseUrl已经有#但没有/，则添加/
+
+                if (isHistoryMode) {
+                    // History模式 - 直接将路径添加到域名后
+                    fullUrl = `${baseUrl}/${cleanPath}`;
+                } else if (baseUrl.endsWith('#')) {
+                    // Hash模式 - 如果baseUrl已经有#但没有/，则添加/
                     fullUrl = `${baseUrl}/${cleanPath}`;
                 } else if (baseUrl.endsWith('#/')) {
-                    // 如果baseUrl已经有#/，则直接添加路径
+                    // Hash模式 - 如果baseUrl已经有#/，则直接添加路径
                     fullUrl = `${baseUrl}${cleanPath}`;
                 } else {
-                    // 其他情况
+                    // 其他情况 - 添加#/
                     fullUrl = `${baseUrl}#/${cleanPath}`;
                 }
 
@@ -129,21 +138,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 fullUrl = fullUrl.replace(/([^:]\/)\/+/g, '$1');
 
                 html += `<div class="full-url-item">
-          <span class="url-text">${fullUrl}</span>
-          <button class="url-copy-btn" data-url="${fullUrl}">复制</button>
-          <button class="url-open-btn" data-url="${fullUrl}">打开</button>
-        </div>`;
+                <span class="url-text">${fullUrl}</span>
+                <button class="url-copy-btn" data-url="${fullUrl}">复制</button>
+                <button class="url-open-btn" data-url="${fullUrl}">打开</button>
+            </div>`;
             });
 
             html += `</div>`;
 
             // 添加复制按钮 - 包括"复制所有路径"按钮
             html += `
-        <div class="copy-actions">
-          <button id="copyPathsBtn" class="secondary-btn">复制所有路径</button>
-          <button id="copyUrlsBtn" class="secondary-btn">复制所有URL</button>
-        </div>
-      `;
+            <div class="copy-actions">
+                <button id="copyPathsBtn" class="secondary-btn">复制所有路径</button>
+                <button id="copyUrlsBtn" class="secondary-btn">复制所有URL</button>
+            </div>
+        `;
 
             // 设置HTML内容
             pathListContainer.innerHTML = html;
