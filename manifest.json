@@ -1,0 +1,38 @@
+{
+  "name": "Vue Crack",
+  "version": "1.0",
+  "description": "检测网站是否使用Vue.js框架并分析路由结构",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icons/icon256.png"
+  },
+  "icons": {
+    "16": "icons/icon256.png",
+    "48": "icons/icon256.png",
+    "128": "icons/icon256.png",
+    "256": "icons/icon256.png"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["detector.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
