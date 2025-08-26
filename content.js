@@ -12,7 +12,6 @@ let routerAnalysisResult = null;
 // 注入页面上下文脚本
 function injectDetector() {
     try {
-        // 创建script元素
         const script = document.createElement('script');
         script.src = chrome.runtime.getURL('detector.js');
         script.onload = function() {
@@ -31,7 +30,6 @@ function injectDetector() {
 
 // 监听detector.js的消息
 window.addEventListener('message', function(event) {
-    // 确保消息来自当前页面
     if (event.source !== window) return;
 
     if (event.data.type === 'VUE_DETECTION_RESULT') {
@@ -130,7 +128,6 @@ function enhancedVueDetection() {
                     return true;
                 }
             } catch (e) {
-                // 忽略无效选择器的错误
             }
         }
 
@@ -147,7 +144,6 @@ function enhancedVueDetection() {
         return !!window.Vue || !!window.$nuxt;
     }
 
-    // 运行所有检测方法
     return checkVueInstance() ||
         checkVueDOMFeatures() ||
         checkVueDevtools() ||
@@ -181,26 +177,22 @@ function detectFromPageText(fastMode = false) {
 // 监听来自popup的消息
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.action === "detectVue") {
-        // 根据请求决定使用快速模式还是标准模式
+        // 根据请求决定使用快速模式/标准模式
         const fastMode = request.fastMode === true;
 
-        // 快速响应
         sendResponse({status: "detecting"});
 
-        // 尝试检测
         if (!detectFromPageText(fastMode)) {
             injectDetector();
         }
     }
     else if (request.action === "analyzeVueRouter") {
-        // 如果已经有路由分析结果，直接发送
         if (routerAnalysisResult) {
             chrome.runtime.sendMessage({
                 action: "vueRouterAnalysisResult",
                 result: routerAnalysisResult
             });
         } else {
-            // 否则重新注入detector.js
             injectDetector();
         }
 
@@ -213,7 +205,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 function initDetection() {
     // 立即开始快速检测
     if (detectFromPageText(true)) {
-        return; // 如果快速检测成功，则返回
+        return;
     }
 
     // 如果快速检测失败，尝试注入detector.js

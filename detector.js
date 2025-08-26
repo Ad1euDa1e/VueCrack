@@ -112,6 +112,77 @@
                     return val === true || val === 'true' || val === 1 || val === '1';
                 }
 
+                // 尝试从Router实例中提取基础路径
+                function extractRouterBase(router) {
+                    try {
+                        // Vue Router 3.x/4.x
+                        if (router.options && router.options.base) {
+                            return router.options.base;
+                        }
+
+                        // 其他可能的位置
+                        if (router.history && router.history.base) {
+                            return router.history.base;
+                        }
+
+                        return '';
+                    } catch (e) {
+                        console.warn('提取Router基础路径时出错:', e);
+                        return '';
+                    }
+                }
+
+                // 分析页面中的链接
+                function analyzePageLinks() {
+                    const result = {
+                        detectedBasePath: '',
+                        commonPrefixes: []
+                    };
+
+                    try {
+                        // 收集页面上所有链接
+                        const links = Array.from(document.querySelectorAll('a[href]'))
+                            .map(a => a.getAttribute('href'))
+                            .filter(href =>
+                                href &&
+                                href.startsWith('/') &&
+                                !href.startsWith('//') &&
+                                !href.includes('.') // 排除静态资源
+                            );
+
+                        if (links.length < 3) return result; // 链接太少，不足以分析
+
+                        // 解析所有链接的路径段
+                        const pathSegments = links.map(link => link.split('/').filter(Boolean));
+
+                        // 检查第一段路径是否有共同的前缀
+                        const firstSegments = {};
+                        pathSegments.forEach(segments => {
+                            if (segments.length > 0) {
+                                const first = segments[0];
+                                firstSegments[first] = (firstSegments[first] || 0) + 1;
+                            }
+                        });
+
+                        // 按出现频率排序
+                        const sortedPrefixes = Object.entries(firstSegments)
+                            .sort((a, b) => b[1] - a[1])
+                            .map(entry => ({ prefix: entry[0], count: entry[1] }));
+
+                        result.commonPrefixes = sortedPrefixes;
+
+                        // 如果最常见的前缀出现频率超过50%，认为它是基础路径
+                        if (sortedPrefixes.length > 0 &&
+                            sortedPrefixes[0].count / links.length > 0.5) {
+                            result.detectedBasePath = '/' + sortedPrefixes[0].prefix;
+                        }
+                    } catch (e) {
+                        console.warn('分析页面链接时出错:', e);
+                    }
+
+                    return result;
+                }
+
                 // ======== 修改路由 meta ========
                 function patchAllRouteAuth(router) {
                     const modified = [];
@@ -261,7 +332,13 @@
                     routerDetected: false,
                     logs: [],
                     modifiedRoutes: [],
-                    allRoutes: []
+                    allRoutes: [],
+                    routerBase: '',
+                    pageAnalysis: {
+                        detectedBasePath: '',
+                        commonPrefixes: []
+                    },
+                    currentPath: window.location.pathname
                 };
 
                 // 捕获控制台输出
@@ -334,6 +411,16 @@
 
                 result.routerDetected = true;
                 console.log('✅ Vue 版本 ：', result.vueVersion);
+
+                // 提取Router基础路径
+                result.routerBase = extractRouterBase(router);
+                console.log('📍 Router基础路径:', result.routerBase || '(无)');
+
+                // 分析页面链接
+                result.pageAnalysis = analyzePageLinks();
+                if (result.pageAnalysis.detectedBasePath) {
+                    console.log('🔍 从页面链接检测到基础路径:', result.pageAnalysis.detectedBasePath);
+                }
 
                 // 修改路由鉴权元信息并清除导航守卫
                 result.modifiedRoutes = patchAllRouteAuth(router);
