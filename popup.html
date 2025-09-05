@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <style>
+		*  {
+			flex-grow: 0;
+			flex-shrink: 0;
+			box-sizing: border-box;
+		}
         body {
-            width: 400px;
+            width: 600px;
             padding: 15px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-size: 14px;
@@ -93,14 +98,8 @@
         .full-urls-list {
             display: flex;
             flex-direction: column;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 8px;
             max-height: 200px;
             overflow-y: auto;
-            background-color: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         .full-url-item {
             display: flex;
@@ -114,8 +113,12 @@
         .full-url-item:last-child {
             border-bottom: none;
         }
+		.full-url-item:hover {
+			background-color: #c0bfbf;
+		}
+
         .url-text {
-            flex-grow: 1;
+			flex: 1;
             overflow: hidden;
             text-overflow: ellipsis;
             margin-right: 5px;
@@ -260,14 +263,6 @@
 
         .standard-urls .full-url-item {
             border-left: 3px solid transparent;
-        }
-
-        .full-urls-list {
-            max-height: none;
-            border: none;
-            border-radius: 0;
-            margin: 0;
-            box-shadow: none;
         }
     </style>
 </head>
