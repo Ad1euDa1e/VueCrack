@@ -1,7 +1,7 @@
 {
   "name": "Vue Crack",
-  "version": "1.0",
-  "description": "检测网站是否使用Vue.js框架并分析路由结构",
+  "version": "1.2",
+  "description": "检测网站是否使用Vue框架并分析路由结构",
   "manifest_version": 3,
   "action": {
     "default_popup": "popup.html",
