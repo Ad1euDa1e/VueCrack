@@ -660,53 +660,29 @@
 
     // ======== 延迟检测机制 ========
     function delayedDetection(delay = 0, retryCount = 0) {
-        // 最大重试5次
-        if (retryCount >= 5) {
+        // 改为最大重试3次
+        if (retryCount >= 3) {
             sendResult({
                 detected: false,
-                method: 'Max retry limit reached (5 attempts)'
+                method: 'Max retry limit reached (3 attempts)'
             });
             return;
         }
 
         setTimeout(() => {
-            try {
-                const vueRoot = simpleVueDetection();
+            const vueRoot = simpleVueDetection();
 
-                if (vueRoot) {
-                    sendResult({
-                        detected: true,
-                        method: `Delayed detection (${delay}ms, attempt ${retryCount + 1})`
-                    });
-
-                    setTimeout(() => {
-                        const analysisResult = performFullAnalysis();
-                        sendRouterResult(analysisResult);
-                    }, 100);
-                } else if (delay === 0) {
-                    delayedDetection(500, retryCount + 1);
-                } else if (delay === 500) {
-                    delayedDetection(1000, retryCount + 1);
-                } else if (delay === 1000) {
-                    delayedDetection(2000, retryCount + 1);
-                } else if (delay === 2000) {
-                    delayedDetection(3000, retryCount + 1);
-                } else {
-                    sendResult({
-                        detected: false,
-                        method: `All delayed detection failed (${retryCount + 1} attempts)`
-                    });
-                }
-            } catch (error) {
-                handleError(error, `delayedDetection(${delay}, attempt ${retryCount + 1})`);
-                if (retryCount < 4) {
-                    delayedDetection(delay + 500, retryCount + 1);
-                } else {
-                    sendResult({
-                        detected: false,
-                        method: 'Detection failed after max retries'
-                    });
-                }
+            if (vueRoot) {
+                // 找到Vue实例的处理...
+            } else if (delay === 0) {
+                delayedDetection(300, retryCount + 1);    // 第1次重试：300ms
+            } else if (delay === 300) {
+                delayedDetection(600, retryCount + 1);    // 第2次重试：600ms
+            } else {
+                sendResult({
+                    detected: false,
+                    method: `All delayed detection failed (${retryCount + 1} attempts)`
+                });
             }
         }, delay);
     }

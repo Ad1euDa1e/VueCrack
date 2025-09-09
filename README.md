@@ -1,7 +1,7 @@
 # VueCrack
 
 ![Vue工具](https://img.shields.io/badge/Vue-Router-41b883)
-![版本](https://img.shields.io/badge/版本-1.2-blue)
+![版本](https://img.shields.io/badge/版本-1.3-blue)
 ![安全工具](https://img.shields.io/badge/安全-渗透测试-red)
 
 这是一个专为红队人员开发的浏览器插件，用于分析Vue框架网站的路由结构，并绕过路由守卫，从而发现站点的**隐藏资产**与**未授权访问漏洞**。
