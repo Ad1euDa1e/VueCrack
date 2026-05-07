@@ -3,268 +3,512 @@
 <head>
     <meta charset="UTF-8">
     <style>
+        :root {
+            --vue-dark: #35495e;
+            --vue-green: #41b883;
+            --vue-green-hover: #369870;
+            --vue-green-pale: #f0f7f4;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f4;
+            --gray-200: #e8eaed;
+            --gray-300: #dadce0;
+            --gray-400: #bdc1c6;
+            --gray-500: #9aa0a6;
+            --gray-600: #80868b;
+            --gray-700: #5f6368;
+            --gray-800: #3c4043;
+            --gray-900: #202124;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            width: 500px;
-            padding: 15px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 14px;
+            width: 480px;
+            padding: 16px;
             margin: 0;
-            background-color: #f8f9fa;
-            color: #333;
-        }
-        h2 {
-            margin-top: 0;
-            color: #41b883;
-            display: flex;
-            align-items: center;
-            font-weight: 500;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-        h2 svg {
-            margin-right: 8px;
-        }
-        h3 {
-            margin-top: 20px;
-            margin-bottom: 10px;
-            color: #35495e;
-            font-weight: 500;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-        }
-        .status-indicators {
-            margin: 15px 0;
-        }
-        .status-item {
-            padding: 8px 12px;
-            margin: 5px 0;
-            border-radius: 6px;
+            background: var(--gray-100);
+            color: var(--gray-800);
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
             font-size: 13px;
+            line-height: 1.5;
+        }
+
+        h2 {
             display: flex;
             align-items: center;
+            margin: 0 0 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--gray-200);
+            color: var(--vue-dark);
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.2;
         }
+
+        h2 svg {
+            width: 22px;
+            height: 22px;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin: 18px 0 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--gray-200);
+            color: var(--vue-dark);
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.35;
+        }
+
+        .all-in-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            background: #fff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        .all-in-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray-900);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .all-in-status {
+            margin-top: 4px;
+            color: var(--gray-600);
+            font-size: 12px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            width: 0;
+            height: 0;
+            opacity: 0;
+        }
+
+        .switch-slider {
+            position: absolute;
+            inset: 0;
+            cursor: pointer;
+            background: var(--gray-400);
+            border-radius: 999px;
+            transition: background-color 0.2s ease;
+        }
+
+        .switch-slider:before {
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            left: 3px;
+            top: 3px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s ease;
+        }
+
+        .switch input:checked + .switch-slider {
+            background: var(--vue-green);
+        }
+
+        .switch input:checked + .switch-slider:before {
+            transform: translateX(18px);
+        }
+
+        .switch input:disabled + .switch-slider {
+            cursor: not-allowed;
+            opacity: 0.55;
+        }
+
+        .route-count-badge {
+            flex-shrink: 0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: var(--gray-100);
+            color: var(--gray-700);
+            font-family: 'SF Mono', SFMono-Regular, ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .version-badge {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: var(--vue-green-pale);
+            color: var(--vue-green-hover);
+            font-family: 'SF Mono', SFMono-Regular, ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-indicators {
+            margin: 16px 0;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            margin: 0 0 8px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
         .status-item svg {
             margin-right: 8px;
             flex-shrink: 0;
         }
+
         .success {
-            background-color: #e8f5e9;
-            color: #2e7d32;
+            border-left: 3px solid var(--vue-green);
+            background: var(--vue-green-pale);
+            color: var(--vue-green-hover);
         }
+
         .info {
-            background-color: #e3f2fd;
-            color: #1976d2;
+            border-left: 3px solid var(--gray-400);
+            background: var(--gray-50);
+            color: var(--gray-700);
         }
-        .version-badge {
-            display: inline-block;
-            background-color: #41b883;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            margin-left: 8px;
+
+        .error {
+            border-left: 3px solid #d93025;
+            background: #fce8e6;
+            color: #b3261e;
         }
+
         .path-list {
             display: flex;
             flex-direction: column;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 8px;
             max-height: 150px;
+            margin: 10px 0;
+            padding: 8px;
             overflow-y: auto;
-            background-color: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            background: #fff;
         }
+
         .path-item {
             padding: 6px 10px;
-            border-bottom: 1px solid #eee;
-            font-family: 'Courier New', monospace;
+            border-bottom: 1px solid var(--gray-100);
+            font-family: 'SF Mono', SFMono-Regular, ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
             font-size: 12px;
             word-break: break-all;
         }
+
         .path-item:last-child {
             border-bottom: none;
         }
+
         .path-item:hover {
-            background-color: #f5f5f5;
+            background: var(--gray-50);
         }
+
+        .path-mode-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 0 12px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .path-mode-btn {
+            flex: 0 1 auto;
+            min-width: 0;
+            max-width: 300px;
+            padding: 6px 14px;
+            overflow: hidden;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            background: #fff;
+            color: var(--gray-700);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        }
+
+        .path-mode-btn:hover {
+            border-color: var(--vue-green);
+            background: var(--vue-green-pale);
+            color: var(--vue-green-hover);
+        }
+
+        .path-mode-btn.active {
+            border-color: var(--vue-green);
+            background: var(--vue-green);
+            color: #fff;
+        }
+
+        .url-section {
+            margin-bottom: 16px;
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            background: #fff;
+        }
+
+        .url-section-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            color: var(--gray-700);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .url-section-header svg {
+            flex-shrink: 0;
+        }
+
         .full-urls-list {
             display: flex;
             flex-direction: column;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 8px;
-            max-height: 200px;
-            overflow-y: auto;
-            background-color: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            overflow: visible;
+            background: #fff;
         }
+
         .full-url-item {
             display: flex;
             align-items: center;
-            padding: 6px 10px;
-            border-bottom: 1px solid #eee;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            word-break: break-all;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 8px 16px 8px 13px;
+            border-bottom: 1px solid var(--gray-100);
+            border-left: 3px solid transparent;
+            font-size: 13px;
+            transition: background-color 0.15s ease;
         }
+
         .full-url-item:last-child {
             border-bottom: none;
         }
+
+        .full-url-item:hover {
+            background: var(--gray-50);
+        }
+
+        .full-url-item.current-route {
+            border-left-color: var(--vue-green) !important;
+            background: var(--vue-green-pale);
+        }
+
+        .url-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .url-text {
-            flex-grow: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-right: 5px;
+            flex: 1;
+            min-width: 0;
+            color: var(--gray-700);
+            font-family: 'SF Mono', SFMono-Regular, ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+            font-size: 12px;
+            line-height: 1.45;
+            white-space: normal;
+            word-break: break-all;
         }
-        .url-copy-btn, .url-open-btn {
-            background-color: #5f6368;
-            color: white;
-            border: none;
-            padding: 3px 8px;
+
+        .url-domain {
+            color: var(--gray-500);
+            font-weight: 400;
+        }
+
+        .url-path {
+            color: var(--gray-800);
+            font-weight: 500;
+        }
+
+        .route-status-slot {
+            width: 48px;
+            min-width: 48px;
+            display: flex;
+            justify-content: flex-end;
+            flex-shrink: 0;
+        }
+
+        .route-status-badge {
+            flex-shrink: 0;
+            padding: 0;
             border-radius: 4px;
-            font-size: 10px;
+            color: var(--vue-green-hover);
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .route-status-badge.current {
+            background: transparent;
+            color: var(--vue-green-hover);
+        }
+
+        .route-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .url-copy-btn,
+        .url-open-btn,
+        .secondary-btn {
+            border-radius: 4px;
             cursor: pointer;
-            margin-left: 4px;
-            transition: background-color 0.2s;
+            font-weight: 500;
+            transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
         }
-        .url-copy-btn:hover {
-            background-color: #4285f4;
-        }
-        .full-urls-list {
-            max-height: none;
-            border: none;
-            border-radius: 0;
-            margin: 0;
-            box-shadow: none;
-        }
+
+        .url-copy-btn,
         .url-open-btn {
-            background-color: #41b883;
+            padding: 4px 10px;
+            border: 1px solid;
+            font-size: 12px;
         }
+
+        .url-copy-btn {
+            border-color: var(--gray-300);
+            background: #fff;
+            color: var(--gray-700);
+        }
+
+        .url-copy-btn:hover {
+            border-color: var(--gray-400);
+            background: var(--gray-50);
+            color: var(--gray-900);
+        }
+
+        .url-open-btn {
+            border-color: var(--vue-green);
+            background: var(--vue-green);
+            color: #fff;
+        }
+
         .url-open-btn:hover {
-            background-color: #349268;
+            border-color: var(--vue-green-hover);
+            background: var(--vue-green-hover);
         }
+
+        .url-copy-btn:active,
+        .url-open-btn:active,
+        .secondary-btn:active {
+            transform: scale(0.98);
+        }
+
         .copy-actions {
             display: flex;
             justify-content: flex-end;
-            margin-top: 12px;
+            gap: 8px;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--gray-200);
         }
+
         .secondary-btn {
-            background-color: #35495e;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            margin-left: 8px;
-            transition: background-color 0.2s;
+            padding: 6px 14px;
+            border: 1px solid var(--gray-300);
+            background: #fff;
+            color: var(--gray-700);
+            font-size: 13px;
         }
+
         .secondary-btn:hover {
-            background-color: #2c3e50;
+            border-color: var(--vue-green);
+            background: var(--vue-green-pale);
+            color: var(--vue-green-hover);
         }
+
         .loading-spinner {
             display: inline-block;
             width: 16px;
             height: 16px;
-            border: 2px solid rgba(25, 118, 210, 0.3);
-            border-radius: 50%;
-            border-top-color: #1976d2;
-            animation: spin 1s linear infinite;
             margin-right: 8px;
+            border: 2px solid rgba(65, 184, 131, 0.22);
+            border-top-color: var(--vue-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
+
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
         .hidden {
             display: none;
         }
 
         .full-url-item.alternative {
-            background-color: #f5f5f5;
-            padding-left: 20px;
-            border-left: 3px solid #e0e0e0;
-            margin-top: -5px;
             position: relative;
+            margin-top: 0;
+            padding-left: 13px;
+            border-left: 3px solid var(--gray-300);
+            background: var(--gray-50);
         }
 
         .alt-label {
             position: absolute;
             right: 10px;
             top: 6px;
-            font-size: 10px;
-            background-color: #eeeeee;
-            color: #757575;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-
-        .base-path-info {
-            margin-bottom: 10px;
-        }
-
-        .path-type-selector {
-            display: flex;
-            padding: 6px 0;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .path-type-option {
-            padding: 4px 10px;
-            margin-right: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            background-color: #eee;
-        }
-
-        .path-type-option.active {
-            background-color: #41b883;
-            color: white;
+            padding: 0;
+            background: transparent;
+            color: var(--gray-500);
+            font-size: 11px;
         }
 
         .url-group {
-            border-left: 3px solid transparent;
             margin-bottom: 5px;
+            border-left: 3px solid transparent;
         }
 
         .url-group.primary {
-            border-left-color: #41b883;
+            border-left-color: var(--vue-green);
         }
 
-        .url-section {
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .url-section-header {
-            background-color: #f5f5f5;
-            padding: 8px 12px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #333;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            align-items: center;
-        }
-
-        .url-section-header svg {
-            margin-right: 8px;
-        }
-
-        .base-path-urls .full-url-item {
-            background-color: #f8fff9;
-            border-left: 3px solid #41b883;
-        }
-
-        .standard-urls .full-url-item {
-            border-left: 3px solid transparent;
+        .url-copy-btn:focus-visible,
+        .url-open-btn:focus-visible,
+        .secondary-btn:focus-visible,
+        .path-mode-btn:focus-visible,
+        .switch input:focus-visible + .switch-slider {
+            outline: 2px solid var(--vue-green);
+            outline-offset: 2px;
         }
     </style>
 </head>
@@ -276,6 +520,17 @@
     </svg>
     VueCrack
 </h2>
+
+<div class="all-in-panel">
+    <div>
+        <div class="all-in-title">梭哈模式</div>
+        <div id="allInStatus" class="all-in-status">读取状态中...</div>
+    </div>
+    <label class="switch" title="刷新页面后生效">
+        <input id="allInToggle" type="checkbox">
+        <span class="switch-slider"></span>
+    </label>
+</div>
 
 <div id="routerAnalysisContainer"></div>
 <div id="pathListContainer"></div>
